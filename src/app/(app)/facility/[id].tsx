@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Link, Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchFacilityDetail } from '@/api/facilities';
@@ -14,6 +14,7 @@ import { colors, radius, spacing } from '@/theme/colors';
 
 export default function FacilityDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
 
   const query = useQuery({
     queryKey: ['facility', id],
@@ -67,9 +68,9 @@ export default function FacilityDetailScreen() {
             style={styles.heroGradient}
           />
           <SafeAreaView style={styles.backRow} edges={['top']}>
-            <Link href=".." asChild>
-              <Text style={styles.backButton}>← Back</Text>
-            </Link>
+            <Text style={styles.backButton} onPress={() => router.back()}>
+              ← Back
+            </Text>
           </SafeAreaView>
         </View>
 
@@ -134,9 +135,10 @@ export default function FacilityDetailScreen() {
           <Text style={styles.footerPrice}>{formatIDR(lowestPrice)}/hr</Text>
         </View>
         <View style={styles.footerButton}>
-          <Link href={`/(app)/book/${facility.id}`} asChild>
-            <Button label="Check availability" onPress={() => {}} />
-          </Link>
+          <Button
+            label="Check availability"
+            onPress={() => router.push(`/(app)/book/${facility.id}`)}
+          />
         </View>
       </View>
     </View>

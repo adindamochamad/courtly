@@ -35,7 +35,13 @@
         }
       ],
       "expo-secure-store",
-      "expo-image"
+      "expo-image",
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "Courtly needs calendar access to save your court bookings."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

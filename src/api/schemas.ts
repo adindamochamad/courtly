@@ -134,6 +134,7 @@ export const bookingSchema = z.object({
 
 export const bookingListResponseSchema = z.object({
   data: z.array(bookingSchema),
+  pagination: paginationSchema,
 });
 
 // ---------- Inferred types ----------

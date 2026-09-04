@@ -75,7 +75,6 @@ export default function BookingScreen() {
       if (current && current.courtId === court.id) {
         const times = current.slots.map((s) => s.startTime).sort();
         const first = times[0];
-        const last = times[times.length - 1];
         if (slot.endTime === first) {
           return {
             ...current,

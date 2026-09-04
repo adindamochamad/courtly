@@ -13,7 +13,6 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
-  FACILITIES_PAGE_SIZE,
   fetchCities,
   fetchFacilities,
   fetchSports,

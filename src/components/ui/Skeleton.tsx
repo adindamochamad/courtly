@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Animated, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { colors, radius } from '@/theme/colors';
@@ -17,7 +17,7 @@ export function Skeleton({
   borderRadius = radius.sm,
   style,
 }: SkeletonProps) {
-  const opacity = useRef(new Animated.Value(0.4)).current;
+  const opacity = useMemo(() => new Animated.Value(0.4), []);
 
   useEffect(() => {
     const pulse = Animated.loop(

@@ -8,6 +8,8 @@ Courtly lets users browse sports facilities in Jakarta, check court availability
 
 ### Install the APK (recommended)
 
+> **Clone note:** The APK is stored via Git LFS. After cloning, run `git lfs pull` to download it.
+
 1. Download [`releases/courtly-android.apk`](releases/courtly-android.apk) from this repo
 2. Install on an Android device (enable "Install from unknown sources" if prompted)
 3. Open Courtly → **Create an account** or sign in with a test account (see below)

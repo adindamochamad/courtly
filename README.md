@@ -1,191 +1,118 @@
-# Courtly — Sports Facility Booking App
+# Courtly
 
-Mobile take-home submission for **Software Engineer (App & Web Focused) @ Hyge**.
+A mobile app for browsing sports facilities and booking courts in Jakarta. Built with Expo and React Native.
 
-Courtly lets users browse sports facilities in Jakarta, check court availability, book hourly slots, and manage their bookings — integrated with the [Courtly REST API](https://courtly-api.hyge.web.id/api/docs).
+Courtly lets you discover venues, check real-time availability, book hourly slots, and manage your bookings — all from your phone.
 
-## Quick start (reviewers)
+## Features
 
-### Install the APK (recommended)
+- **Browse facilities** — search, filter by sport and city, infinite scroll
+- **Facility details** — photos, amenities, courts, and pricing
+- **Book courts** — pick a date, select hourly slots (07:00–22:00), book consecutive hours
+- **My bookings** — upcoming, past, and cancelled tabs with full detail
+- **Add to calendar** — save confirmed bookings to your device calendar
+- **Secure auth** — register, login, persistent session with encrypted token storage
 
-> **Clone note:** The APK is stored via Git LFS. After cloning, run `git lfs pull` to download it.
+## Screenshots
 
-1. Download [`releases/courtly-android.apk`](releases/courtly-android.apk) from this repo
-2. Install on an Android device (enable "Install from unknown sources" if prompted)
-3. Open Courtly → **Create an account** or sign in with a test account (see below)
+_Screenshots coming soon._
 
-### Run from source
+## Getting started
+
+### Prerequisites
+
+- Node.js 18+
+- npm
+- [Expo Go](https://expo.dev/go) on your phone (for development), or install the pre-built APK below
+
+### Install & run
 
 ```bash
+git clone https://github.com/adindamochamad/courtly.git
+cd courtly
 npm install
 npx expo start
 ```
 
-Scan the QR code with **Expo Go** (Android/iOS) or press `w` for web preview.
+Scan the QR code with Expo Go, or press `a` / `i` / `w` for Android emulator, iOS simulator, or web.
 
-> API base URL is hard-coded to `https://courtly-api.hyge.web.id` — no env file needed.
+### Install the Android APK
 
-### Test account
+A pre-built APK is available at [`releases/courtly-android.apk`](releases/courtly-android.apk).
 
-| Field | Value |
-|---|---|
-| Email | `courtly.test.0904@example.com` |
-| Password | `Password123!` |
+> The APK is stored via Git LFS. After cloning, run `git lfs pull` to download it.
 
-Or register a new account in-app (password: min 8 chars, 1 uppercase, 1 number).
-
----
-
-## Features
-
-| Requirement | Implementation |
-|---|---|
-| Register & login | `/(auth)/register`, `/(auth)/login` with React Hook Form + Zod |
-| Secure JWT storage | `expo-secure-store` (Keychain / Keystore) |
-| Auto-logout on 401 | API client notifies auth store → route guard redirects to login |
-| Facility list | Infinite scroll, search (debounced), sport & city filters |
-| Facility detail | Description, amenities, courts, pricing, hero image |
-| Availability | 14-day date strip, hourly slot grid (07:00–22:00) per court |
-| Book a slot | Consecutive multi-slot selection, sequential API calls |
-| My bookings | Upcoming / Past / Cancelled tabs |
-| Booking detail | Price breakdown, cancel, add to calendar |
-| Android APK | `releases/courtly-android.apk` (EAS internal build) |
-
----
+1. Transfer the APK to your Android device
+2. Enable "Install from unknown sources" if prompted
+3. Open Courtly and create an account
 
 ## Tech stack
 
-| Layer | Choice | Why |
-|---|---|---|
-| Framework | Expo SDK 57 + React Native | Required stack; latest stable |
-| Language | TypeScript (strict) | Type safety across API ↔ UI |
-| Navigation | Expo Router (file-based) | Typed routes, deep linking, tab + stack |
-| Data fetching | TanStack Query v5 | Cache, retry, infinite scroll, invalidation |
-| Auth state | Zustand | Lightweight; pairs well with SecureStore |
-| Forms | React Hook Form + Zod | Client validation + shared schemas with API |
-| Styling | StyleSheet + design tokens | No extra UI lib; full control over dark theme |
+| Layer | Technology |
+|---|---|
+| Framework | Expo SDK 57 · React Native |
+| Language | TypeScript (strict) |
+| Navigation | Expo Router |
+| Data fetching | TanStack Query |
+| Auth state | Zustand + expo-secure-store |
+| Forms | React Hook Form + Zod |
+| Styling | StyleSheet + design tokens |
 
----
+## Expo modules
 
-## Expo modules (5 used — requirement: ≥3)
+| Module | Purpose |
+|---|---|
+| `expo-secure-store` | Secure JWT storage (Keychain / Keystore) |
+| `expo-image` | Cached images with smooth transitions |
+| `expo-haptics` | Tactile feedback on interactions |
+| `expo-linear-gradient` | Hero image overlay on facility detail |
+| `expo-calendar` | Save bookings to device calendar |
 
-| Module | Where used | Why |
-|---|---|---|
-| **expo-secure-store** | Auth token persistence | JWT must not live in AsyncStorage — uses OS secure enclave |
-| **expo-image** | Facility cards, detail hero, booking thumbnails | Disk + memory cache, smooth transitions, better perf than `<Image>` |
-| **expo-haptics** | Buttons, filter chips, slot selection, booking success/error | Tactile feedback on key interactions |
-| **expo-linear-gradient** | Facility detail hero overlay | Smooth fade from photo into dark background |
-| **expo-calendar** | "Add to calendar" on booking detail | Saves court time as a native calendar event post-booking |
-
----
-
-## Architecture
+## Project structure
 
 ```
 src/
-├── app/                  # Expo Router screens (file = route)
-│   ├── (auth)/           # Login, register (unauthenticated)
-│   └── (app)/            # Tab navigator + nested detail screens
-├── api/                  # HTTP client, Zod schemas, endpoint functions
-├── components/           # Shared UI (Button, Skeleton, cards, grids)
-├── lib/                  # Formatters, debounce, calendar helper
-├── stores/               # Zustand (auth)
-└── theme/                # Design tokens (colors, spacing, radius)
+├── app/           # Expo Router screens
+│   ├── (auth)/    # Login & register
+│   └── (app)/     # Main tabs + detail screens
+├── api/           # HTTP client, Zod schemas, endpoints
+├── components/    # Shared UI components
+├── lib/           # Utilities (formatters, calendar, debounce)
+├── stores/        # Zustand stores
+└── theme/         # Design tokens
 ```
 
-### API client design
+## API
 
-Every response is validated at runtime with **Zod schemas** derived from the Swagger spec. If the backend changes shape, the app fails loudly in development instead of rendering `undefined`.
+The app connects to the Courtly REST API:
 
-```typescript
-// Simplified flow
-fetch(url) → parse JSON → schema.safeParse() → typed data | ApiError
-```
+- **Base URL:** `https://courtly-api.hyge.web.id`
+- **Docs:** [Swagger](https://courtly-api.hyge.web.id/api/docs)
 
-Protected routes automatically attach `Authorization: Bearer <token>`. A 401 from any endpoint triggers logout via a module-level callback (`auth-token.ts`), avoiding circular imports between the client and auth store.
+All API responses are validated at runtime with Zod schemas. Protected routes attach a Bearer token automatically; expired sessions trigger a logout and redirect to login.
 
-### Multi-slot booking
+## Build
 
-The API accepts **one hourly slot per `POST /v1/bookings` call** (multi-hour ranges return `INVALID_BOOKING_SLOT`). The app lets users select consecutive slots in the UI, then books them sequentially. If a mid-chain slot gets taken (409), the chain stops, availability refreshes, and the user picks again.
-
-### Cache strategy (TanStack Query)
-
-| Query | staleTime | Rationale |
-|---|---|---|
-| Sports / cities | ∞ | Static lookup data |
-| Facilities list | 60s default | Changes infrequently |
-| Availability | 15s | Slots can be booked by others |
-| Bookings | 60s default | Invalidated after create/cancel |
-
----
-
-## API discoveries (not in Swagger)
-
-Documented here for reviewer transparency:
-
-1. **Register returns a token** — same shape as login (`LoginResponseDto`), so the app auto-signs-in after registration.
-2. **Facilities pagination** — `?page=1&limit=10` works; response includes `{ data, pagination }`.
-3. **Bookings list is paginated** — response includes `pagination` (Swagger omits it).
-4. **Booking slots are strictly 1 hour** — `startTime`/`endTime` must span exactly one hourly window.
-5. **Service fee** — 5% of slot price, returned as `serviceFee` in the booking response.
-
----
-
-## Build the APK
-
-Requires a free [Expo](https://expo.dev) account.
+Requires an [Expo](https://expo.dev) account.
 
 ```bash
-# One-time setup
 npx eas-cli login
-npx eas-cli init          # links project to your Expo account
-
-# Build internal APK (cloud, ~15 min)
-npx eas-cli build --platform android --profile preview
-
-# Download the .apk from the Expo dashboard, then:
-mkdir -p releases
-cp ~/Downloads/*.apk releases/courtly-android.apk
-git add releases/courtly-android.apk && git commit -m "chore: add Android APK"
+npm run build:apk
 ```
 
-The `preview` profile in `eas.json` sets `buildType: "apk"` for sideloading (no Play Store).
+The `preview` profile in `eas.json` produces an internal APK for sideloading.
 
----
+## Scripts
 
-## Project structure (routes)
-
-| Route | Screen |
+| Command | Description |
 |---|---|
-| `/(auth)/login` | Sign in |
-| `/(auth)/register` | Create account |
-| `/(app)/` | Explore — facility list |
-| `/(app)/facility/[id]` | Facility detail |
-| `/(app)/book/[facilityId]` | Availability & booking |
-| `/(app)/bookings` | My bookings (tabbed) |
-| `/(app)/booking/[id]` | Booking detail + cancel |
-| `/(app)/profile` | User profile + sign out |
-
----
-
-## Submission checklist
-
-- [x] Source code
-- [x] README.md
-- [x] Android APK at `releases/courtly-android.apk`
-
-**Email to:** `recruitment@hyge.sg`
-
-**Subject:** `Software Engineer Mobile & Web Test Submission — [Your Full Name]`
-
-```
-Full Name: [Your Full Name]
-GitHub Repository: [public URL or invite hyge-sg]
-Notes for reviewer (optional): Tested on Android 14 via sideloaded APK.
-```
-
----
+| `npm start` | Start Expo dev server |
+| `npm run android` | Start on Android |
+| `npm run ios` | Start on iOS |
+| `npm run typecheck` | Run TypeScript checks |
+| `npm run lint` | Run ESLint |
+| `npm run build:apk` | Build Android APK via EAS |
 
 ## License
 
-MIT — take-home assessment project.
+MIT

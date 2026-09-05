@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchFacilityDetail } from '@/api/facilities';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { StateView } from '@/components/ui/StateView';
 import { formatIDR } from '@/lib/format';
+import { debugLog } from '@/lib/debug-log';
 import { colors, radius, spacing } from '@/theme/colors';
 
 export default function FacilityDetailScreen() {
@@ -54,7 +55,6 @@ export default function FacilityDetailScreen() {
 
   return (
     <View style={styles.safe}>
-      <Stack.Screen options={{ headerShown: false }} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View>
           <Image
@@ -137,7 +137,12 @@ export default function FacilityDetailScreen() {
         <View style={styles.footerButton}>
           <Button
             label="Check availability"
-            onPress={() => router.push(`/(app)/book/${facility.id}`)}
+            onPress={() => {
+              // #region agent log
+              debugLog('facility/[id].tsx', 'Check availability pressed', { facilityId: facility.id }, 'B');
+              // #endregion
+              router.push(`/(app)/book/${facility.id}`);
+            }}
           />
         </View>
       </View>

@@ -1,53 +1,23 @@
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Stack } from 'expo-router';
 
 import { colors } from '@/theme/colors';
 
+/**
+ * Stack navigator wrapping tabs + detail/booking screens.
+ * Detail routes push on top of tabs without appearing in the tab bar.
+ */
 export default function AppLayout() {
   return (
-    <Tabs
+    <Stack
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.textFaint,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-        },
-        sceneStyle: { backgroundColor: colors.bg },
+        contentStyle: { backgroundColor: colors.bg },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="tennisball-outline" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="bookings"
-        options={{
-          title: 'My Bookings',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar-outline" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" color={color} size={size} />
-          ),
-        }}
-      />
-      {/* Detail & booking flow live outside the tab bar. */}
-      <Tabs.Screen name="facility/[id]" options={{ href: null }} />
-      <Tabs.Screen name="book/[facilityId]" options={{ href: null }} />
-      <Tabs.Screen name="booking/[id]" options={{ href: null }} />
-    </Tabs>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="facility/[id]" />
+      <Stack.Screen name="book/[facilityId]" />
+      <Stack.Screen name="booking/[id]" />
+    </Stack>
   );
 }

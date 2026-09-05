@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 import type { Booking } from '@/api/schemas';
 import { formatDateLong, formatIDR } from '@/lib/format';
@@ -16,11 +16,14 @@ const STATUS_STYLE: Record<
 };
 
 export function BookingCard({ booking }: { booking: Booking }) {
+  const router = useRouter();
   const status = STATUS_STYLE[booking.status];
 
   return (
-    <Link href={`/(app)/booking/${booking.id}`} asChild>
-      <Pressable style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}>
+    <Pressable
+      style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}
+      onPress={() => router.push(`/(app)/booking/${booking.id}`)}
+    >
         <Image
           source={{ uri: booking.facility.imageUrl }}
           style={styles.thumbnail}
@@ -43,8 +46,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
           </Text>
           <Text style={styles.reference}>{booking.bookingReference}</Text>
         </View>
-      </Pressable>
-    </Link>
+    </Pressable>
   );
 }
 

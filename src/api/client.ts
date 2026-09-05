@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { authToken } from './auth-token';
+import { debugLog } from '@/lib/debug-log';
 
 export const API_BASE_URL = 'https://courtly-api.hyge.web.id';
 
@@ -73,11 +74,17 @@ export async function apiRequest<S extends z.ZodType>(
   }
 
   if (response.status === 401) {
+    // #region agent log
+    debugLog('api/client.ts:401', 'Unauthorized API response', { path, method }, 'E');
+    // #endregion
     authToken.notifyUnauthorized();
     throw new ApiError(401, 'Your session has expired. Please sign in again.');
   }
 
   if (!response.ok) {
+    // #region agent log
+    debugLog('api/client.ts:error', 'API error response', { path, method, status: response.status }, 'D');
+    // #endregion
     let message = `Request failed (${response.status})`;
     try {
       const errorBody = await response.json();
@@ -95,7 +102,12 @@ export async function apiRequest<S extends z.ZodType>(
   const json = await response.json();
   const parsed = schema.safeParse(json);
   if (!parsed.success) {
-    // Surface contract drift loudly in development.
+    // #region agent log
+    debugLog('api/client.ts:schema', 'Schema validation failed', {
+      path,
+      issues: parsed.error.issues.map((i) => i.message).slice(0, 3),
+    }, 'D');
+    // #endregion
     console.error('[api] Response failed schema validation', {
       path,
       issues: parsed.error.issues,

@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { StateView } from '@/components/ui/StateView';
 import { formatDateLong, formatIDR, toApiDate } from '@/lib/format';
-import { debugLog } from '@/lib/debug-log';
 import { colors, radius, spacing } from '@/theme/colors';
 
 /** Estimated service fee rate (confirmed server-side at ~5%). */
@@ -125,9 +124,6 @@ export default function BookingScreen() {
       return created;
     },
     onSuccess: async (created) => {
-      // #region agent log
-      debugLog('book/[facilityId].tsx', 'Booking success', { count: created.length, refs: created.map((b) => b.bookingReference) }, 'C');
-      // #endregion
       await Haptics.notificationAsync(
         Haptics.NotificationFeedbackType.Success,
       );
@@ -138,13 +134,7 @@ export default function BookingScreen() {
         queryKey: ['availability', facilityId, date],
       });
     },
-    onError: async (error, current) => {
-      // #region agent log
-      debugLog('book/[facilityId].tsx', 'Booking failed', {
-        error: error instanceof Error ? error.message : 'unknown',
-        slotCount: current?.slots.length ?? 0,
-      }, 'C');
-      // #endregion
+    onError: async (error) => {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       // Refresh availability so the grid reflects reality.
       void queryClient.invalidateQueries({

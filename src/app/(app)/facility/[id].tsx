@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { StateView } from '@/components/ui/StateView';
 import { formatIDR } from '@/lib/format';
-import { debugLog } from '@/lib/debug-log';
 import { colors, radius, spacing } from '@/theme/colors';
 
 export default function FacilityDetailScreen() {
@@ -137,12 +136,7 @@ export default function FacilityDetailScreen() {
         <View style={styles.footerButton}>
           <Button
             label="Check availability"
-            onPress={() => {
-              // #region agent log
-              debugLog('facility/[id].tsx', 'Check availability pressed', { facilityId: facility.id }, 'B');
-              // #endregion
-              router.push(`/(app)/book/${facility.id}`);
-            }}
+            onPress={() => router.push(`/(app)/book/${facility.id}`)}
           />
         </View>
       </View>

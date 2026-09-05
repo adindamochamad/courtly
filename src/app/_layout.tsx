@@ -6,7 +6,6 @@ import { StatusBar } from 'expo-status-bar';
 
 import { useAuthStore } from '@/stores/auth-store';
 import { colors } from '@/theme/colors';
-import { debugLog } from '@/lib/debug-log';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,14 +31,8 @@ function AuthGate() {
 
     const inAuthGroup = segments[0] === '(auth)';
     if (status === 'unauthenticated' && !inAuthGroup) {
-      // #region agent log
-      debugLog('_layout.tsx:AuthGate', 'Redirect to login', { status, segment: segments[0] }, 'A');
-      // #endregion
       router.replace('/(auth)/login');
     } else if (status === 'authenticated' && inAuthGroup) {
-      // #region agent log
-      debugLog('_layout.tsx:AuthGate', 'Redirect to app', { status, segment: segments[0] }, 'A');
-      // #endregion
       router.replace('/(app)/(tabs)');
     }
   }, [status, segments, router]);

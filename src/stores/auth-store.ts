@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { authToken } from '@/api/auth-token';
 import type { AuthUser, LoginResponse } from '@/api/schemas';
 import { secureStorage } from '@/lib/storage';
-import { debugLog } from '@/lib/debug-log';
 
 const TOKEN_KEY = 'courtly.accessToken';
 const USER_KEY = 'courtly.user';
@@ -40,17 +39,11 @@ export const useAuthStore = create<AuthState>((set) => ({
           token,
           user: JSON.parse(rawUser) as AuthUser,
         });
-        // #region agent log
-        debugLog('auth-store.ts:bootstrap', 'Session restored', { hasToken: true }, 'A');
-        // #endregion
         return;
       }
     } catch {
       // Corrupted storage — fall through to a clean slate.
     }
-    // #region agent log
-    debugLog('auth-store.ts:bootstrap', 'No session found', { hasToken: false }, 'A');
-    // #endregion
     set({ status: 'unauthenticated', token: null, user: null });
   },
 
@@ -61,9 +54,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       secureStorage.set(USER_KEY, JSON.stringify(user)),
     ]);
     set({ status: 'authenticated', token: accessToken, user });
-    // #region agent log
-    debugLog('auth-store.ts:signIn', 'User signed in', { userId: user.id }, 'A');
-    // #endregion
   },
 
   signOut: async () => {
@@ -73,9 +63,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       secureStorage.remove(USER_KEY),
     ]);
     set({ status: 'unauthenticated', token: null, user: null });
-    // #region agent log
-    debugLog('auth-store.ts:signOut', 'User signed out', {}, 'E');
-    // #endregion
   },
 }));
 
